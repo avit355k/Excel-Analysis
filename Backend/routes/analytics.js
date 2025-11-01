@@ -1,15 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const { authenticateToken } = require("./userAuth");
-const analyticsController = require("../controllers/analyticsController");
+const express = require("express")
+const {
+ generateChartData,
+  getAnalysisHistory,
+  generateInsights,
+  deleteAnalysis,
+  getDashboardStats,
+} = require("../controllers/analyticsController")
+const { auth } = require("../middleware/auth")
 
-// Manual analytics routes
-router.post("/create", authenticateToken, analyticsController.createAnalytics);
-router.get("/my-analytics", authenticateToken, analyticsController.getUserAnalytics);
-router.get("/:id", authenticateToken, analyticsController.getAnalyticsById);
+const router = express.Router()
 
-// AI-powered analytics routes
-router.post("/ai-analyze", authenticateToken, analyticsController.aiAnalyze);
-router.get("/test-gemini", authenticateToken, analyticsController.testGemini);
+// Analytics routes
+router.post("/chart-data", auth, generateChartData)
+router.get("/history", auth, getAnalysisHistory)
+router.post("/insights", auth, generateInsights)
+router.delete("/:analysisId", auth, deleteAnalysis)
+router.get("/dashboard-stats", auth, getDashboardStats)
 
-module.exports = router;
+module.exports = router
